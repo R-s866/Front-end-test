@@ -1,0 +1,46 @@
+[ {
+    "firstName" : "james",
+    "secondName" : "west",
+    "email" : "james.west@lorem.com",
+    "date" : "04.11.2019",
+    "time" : 10.20,
+    "subject" : "Meeting at 10.20",
+    "attachments" : "2",
+    "messageType" : "mail"
+} , {
+    "firstName" : "tim",
+    "secondName" : "smith",
+    "email" : "timmothy.s@lorem.com",
+    "date" : "04.11.2019",
+    "time" : 9.20,
+    "subject" : "ACT:Urgent Deadline",
+    "attachments" : "0",
+    "messageType" : "message"
+} , {
+    "firstName" : "Laura",
+    "secondName" : "Doe",
+    "email" : "l.doe.aura@lorem.com",
+    "date" : "03.11.2019",
+    "time" : 16.20,
+    "subject" : "PAR:waiting for project timetable",
+    "attachments" : "0",
+    "messageType" : "mail"
+} , {
+    "firstName" : "Steve",
+    "secondName" : "Smith",
+    "email" : "stevie-Smiths@lorem.com",
+    "date" : "03.11.2019",
+    "time" : 13.20,
+    "subject" : "Meeting at 15.30",
+    "attachments" : "2",
+    "messageType" : "message"
+} , {
+    "firstName" : "James",
+    "secondName" : "Huston",
+    "email" : "j-hust@lorem.com",
+    "date" : "03.11.2019",
+    "time" : 11.20,
+    "subject" : "SYS:Meeting at 15.30",
+    "attachments" : "1",
+    "messageType" : "message"
+} ]

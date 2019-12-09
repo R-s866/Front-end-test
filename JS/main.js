@@ -1,37 +1,56 @@
-
+// List of paths to icons
 const icons = [
     "SVG/Chat_Icon.png",
     "SVG/Email_Icon.png"
 ]
+// List of given prefixes
+const prefixes = ["SYS", "PAR", "ACT"];
 
-async function onStartUp() {
+function onStartUp() {
 
-    var reader = new FileReader();
+    fetch('https://raw.githubusercontent.com/R-s866/Front-end-test/master/tree.json')
+        .then(
+            function (response) {
+                if (response.status !== 200) {
+                    console.log('Looks like there was a problem. Status Code: ' +
+                        response.status);
+                    return;
+                }
+                // Examine the text in the response
+                response.json()
+                    .then(function (data) {
+                        RunTests(data);
+                    });
+            }
+        )
+        .catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        });
 
-    
-    
-    
-    //var myObj = JSON.parse();
+
+}
+
+function RunTests(data) {
 
     const id = "697eae2f-40dd-445e-a0f0-a918f3a4d5c0";
     console.log(Node.getParentNode(data, id));
 
-    //using id again to insert into the child of a child
+    // Using the same id to insert into a nested child
     Node.insertIntoData(data, id);
-    
+
     // these should be objects 
     const preI0 = "Meeting at 10.20"
     Node.GetDomElement(preI0, icons[0]);
-    
+
     const preI = "SYS:Urgent"
     Node.GetDomElement(preI, icons[1]);
 
     const preI1 = "Meeting at 13.20"
     Node.GetDomElement(preI1, icons[0]);
-    
+
     const preI2 = "PAR:Arrange a meeting ASAP"
     Node.GetDomElement(preI2, icons[0]);
-    
+
     const preI3 = "ACT:Arrange a meeting ASAP"
     Node.GetDomElement(preI3, icons[1]);
 }
@@ -41,8 +60,7 @@ class Node {
         const mainTable = document.getElementById("main-table");
         var pre = null;
 
-        // list of given prefixes
-        var prefixes = ["SYS", "PAR", "ACT"];
+
         // returns the prefixe if there is one, or returns null
         // also the messages string without the prefix
         var getMessage = (s) => {
@@ -80,7 +98,7 @@ class Node {
                     <img src=${icon} alt="Email_Icon">
                 </div>`;
 
-            
+
             return li;
         }
 
