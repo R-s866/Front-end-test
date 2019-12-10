@@ -6,9 +6,33 @@ const icons = [
 // List of given prefixes
 const prefixes = ["SYS", "PAR", "ACT"];
 
+// Run when the body of index.html loads
 function onStartUp() {
-
-    fetch('https://raw.githubusercontent.com/R-s866/Front-end-test/master/tree.json')
+    // These APIs are .json files within my test repo
+    // This one is the tree.json provided for the test
+    fetch('https://raw.githubusercontent.com/R-s866/Front-end-test/master/JSON/tree.json')
+        .then(
+            function (response) {
+                // Status 200 is all good, anything else will throw this err
+                if (response.status !== 200) {
+                    console.log('Looks like there was a problem. Status Code: ' +
+                        response.status);
+                    return;
+                }
+                // Examine the text in the response
+                response.json()
+                    .then(function (data) {
+                        // Function that contains the test on tree.json file
+                        RunTests(data);
+                    });
+            }
+        )
+        // Any other errs are caught here
+        .catch(function (err) {
+            console.log('Fetch Error :-S', err);
+        });
+    // This API i made for this project, a list of dumby messages to display
+    fetch('https://raw.githubusercontent.com/R-s866/Front-end-test/master/JSON/messages.json')
         .then(
             function (response) {
                 if (response.status !== 200) {
@@ -19,50 +43,44 @@ function onStartUp() {
                 // Examine the text in the response
                 response.json()
                     .then(function (data) {
-                        RunTests(data);
+                        // Function that contains a loop to display all messages in the .json file
+                        AddMessage(data);
                     });
             }
         )
         .catch(function (err) {
             console.log('Fetch Error :-S', err);
         });
-
-
 }
 
+// Function that handles the test for the tree.json file
 function RunTests(data) {
+    console.log(Node.flattenArray(data));
 
+    // Input id for the nested element 
     const id = "697eae2f-40dd-445e-a0f0-a918f3a4d5c0";
     console.log(Node.getParentNode(data, id));
 
     // Using the same id to insert into a nested child
     Node.insertIntoData(data, id);
-
-    // these should be objects 
-    const preI0 = "Meeting at 10.20"
-    Node.GetDomElement(preI0, icons[0]);
-
-    const preI = "SYS:Urgent"
-    Node.GetDomElement(preI, icons[1]);
-
-    const preI1 = "Meeting at 13.20"
-    Node.GetDomElement(preI1, icons[0]);
-
-    const preI2 = "PAR:Arrange a meeting ASAP"
-    Node.GetDomElement(preI2, icons[0]);
-
-    const preI3 = "ACT:Arrange a meeting ASAP"
-    Node.GetDomElement(preI3, icons[1]);
 }
 
-class Node {
-    static GetDomElement(str, icon) {
+// Loops through messages from messages.json
+function AddMessage(data) {
+    data.forEach(elem => {
+        DomElement.AddDomElement(elem)
+    });
+}
+
+class DomElement {
+    // Adds messages to the screen
+    static AddDomElement(elem) {
+        // Get the Ul element on the dom, to input the messages into in li form
         const mainTable = document.getElementById("main-table");
-        var pre = null;
-
-
-        // returns the prefixe if there is one, or returns null
-        // also the messages string without the prefix
+        // Holds the prefixes for use as a class later
+        let pre = null;
+        // Returns the prefixe if there is one, or returns null
+        // Also the messages string without the prefix
         var getMessage = (s) => {
             var check = s.slice(0, 3);
             if (prefixes.includes(check)) {
@@ -72,46 +90,56 @@ class Node {
                 return s;
             }
         }
-
-        var newElem = (msg) => {
-            var li = document.createElement('li');
-
-            li.setAttribute('class', 'table-element');
-
-            li.classList.add(pre);
-
-            li.innerHTML =
-                `<div class="elem1"></div>
-                <div class="elem2">04.12.2019 <span>13:41</span></div>
-                <div class="elem3">
-                    <small>Subject:</small>
-                    <span>${msg}</span>
-                </div>
-                <div class="elem4">
-                    John Doe <small>John.j.doe@lorem.co.uk</small>
-                    <!-- <div class="elem4-child">hello</div> -->
-                </div>
-                <div class="elem5">
-                    2 <span>Attachments</span>
-                </div>
-                <div class="elem6">
-                    <img src=${icon} alt="Email_Icon">
-                </div>`;
-
-
-            return li;
+        // Returns the approperate icon to use
+        var getIcon = (i) => {
+            switch (i) {
+                case "message":
+                    return icons[0];
+                case "mail":
+                    return icons[1];
+            }
         }
+        // Gets message to be used
+        const message = getMessage(elem.subject);
+        // Gets icon to be used
+        const icon = getIcon(elem.messageType);
 
-        const message = getMessage(str);
-        const add = newElem(message);
+        // Creates a new li, as element.
+        // Which will be appended to the ul in thedom
+        let element = document.createElement('li');
+        // Adds class attribute, so the element will follow my styling
+        element.setAttribute('class', 'table-element');
+        // Adds prefixe as class to change styling acordingly
+        element.classList.add(pre);
 
-        // should do this as a return and append all at the same time
-        mainTable.appendChild(add);
+        // Adds the innerHTML with all the messages elements appropately placed
+        element.innerHTML =
+            `<div class="elem1"></div>
+            <div class="elem2">${elem.date} <span>${elem.time}</span></div>
+            <div class="elem3">
+                <small>Subject:</small>
+                <span>${message}</span>
+            </div>
+            <div class="elem4">
+                ${elem.firstName} ${elem.secondName} <small>${elem.email}</small>
+            </div>
+            <div class="elem5">
+                ${elem.attachments} <span>Attachments</span>
+            </div>
+            <div class="elem6">
+                <img src=${icon} alt="Email_Icon">
+            </div>`;
+
+        // Appends this new message to the ul element in the dom
+        mainTable.appendChild(element);
     }
+}
+
+class Node {
 
     static insertIntoData(data, str) {
-        var result = null;
-        var newNode = {
+        let result = null;
+        const newNode = {
             id: 'hello'
         };
 
@@ -137,7 +165,7 @@ class Node {
 
     // Tree Traversal, 
     static getParentNode(data, str) {
-        var result = null;
+        let result = null;
         data.forEach(parent => {
             if (parent.children != null) {
                 var child = parent.children;
@@ -146,7 +174,6 @@ class Node {
                         result = parent;
                     }
                 });
-                //console.log(child);
             }
         });
         return result;
@@ -155,7 +182,7 @@ class Node {
     // Tree Traversal, flatten data. usees recursion to itterate through
     // the data on the mulitiple levels of the JSON file.
     static flattenArray(data) {
-        var result = [];
+        let result = [];
         var recurse = (cur, prop) => {
             if (Object(cur) !== cur) {
                 result[prop] = cur;
