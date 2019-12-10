@@ -1,3 +1,5 @@
+//#region Array varibles
+
 // List of paths to icons
 const icons = [
     "SVG/Chat_Icon.png",
@@ -5,6 +7,10 @@ const icons = [
 ]
 // List of given prefixes
 const prefixes = ["SYS", "PAR", "ACT"];
+
+//#endregion
+
+//#region Start / fetch Function
 
 // Run when the body of index.html loads
 function onStartUp() {
@@ -53,6 +59,10 @@ function onStartUp() {
         });
 }
 
+//#endregion
+
+//#region Initicate classes functions 
+
 // Function that handles the test for the tree.json file
 function RunTests(data) {
     console.log(Node.flattenArray(data));
@@ -71,6 +81,10 @@ function AddMessage(data) {
         DomElement.AddDomElement(elem)
     });
 }
+
+//#endregion
+
+//#region Add messages to dom
 
 class DomElement {
     // Adds messages to the screen
@@ -135,14 +149,21 @@ class DomElement {
     }
 }
 
-class Node {
+//#endregion
 
+//#region Tree Traversal
+
+// Class for node element that come from 
+class Node {
+    // Finds the give node and adds a node to its children feild
     static insertIntoData(data, str) {
         let result = null;
+        // New node to add in
         const newNode = {
             id: 'hello'
         };
-
+        // Recurse function that iterates through all children of a 
+        // Node until it find one with the matching id
         var recurse = (r) => {
             r.forEach(elem => {
                 if (elem.id === str) {
@@ -153,43 +174,55 @@ class Node {
             });
         }
         recurse(data);
-
+        // If the node contains the children feild add new node to it
         if (result.children != null) {
             result.children.push(newNode);
-        } else {
+        }
+        // If the node does not contain children initicate children
+        // And add the new node to it
+        else {
             result.children = [];
             result.children.push(newNode);
         }
         console.log(result);
     }
 
-    // Tree Traversal, 
+    // Finds the parent node of a given id
     static getParentNode(data, str) {
         let result = null;
+        // Loops through the data and checks a parent has a child
         data.forEach(parent => {
             if (parent.children != null) {
                 var child = parent.children;
+                // Loops through each child to check if the id matches
                 child.forEach(c => {
                     if (c.id === str) {
+                        // If the Id matches returns its parent
                         result = parent;
                     }
                 });
             }
         });
         return result;
-    }
+    }// should have made this recursive too
 
-    // Tree Traversal, flatten data. usees recursion to itterate through
-    // the data on the mulitiple levels of the JSON file.
+    // Flattens data uses recursion to itterate through
+    // the data and all nested objects within the tree.json file
     static flattenArray(data) {
         let result = [];
+        // Recursive function
         var recurse = (cur, prop) => {
+            // Returns input if the data object differces from the data 
             if (Object(cur) !== cur) {
                 result[prop] = cur;
+                // If the data is an array Loop through
             } else if (Array.isArray(cur)) {
                 for (var i = 0, l = cur.length; i < l; i++) {
+                    // Run function again with any data inside the array
+                    // To check there isnt and more nested arrays
                     recurse(cur[i], prop ? prop + "." + i : "" + i);
                 }
+                // If there is an empty array return null
                 if (l == 0) {
                     result[prop] = null;
                 }
@@ -208,3 +241,5 @@ class Node {
         return result;
     }
 }
+
+//#endregion
